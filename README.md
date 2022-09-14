@@ -1,7 +1,5 @@
 ![code](https://raw.githubusercontent.com/hosseinpourziyaie/demonware_companion/master/documentation/readme_header.jpg)
 
-# DEMONWARE COMPANION
-
 ## What is Demonware 
 a private live-service library developed by one of Activision's Teams and its been implemented in every call of duty game since black ops 1(2010)
 
@@ -28,8 +26,8 @@ to deserialize buffer dumps simply drag and drop binary file on it. you can use 
 ## Compile
 Project coded on VS2022 and latest C++ Standards are considered. and it recommended to use VS2019 or higher.
 
-## CREDITS
-All of lovely stackoverflow's contributers those help and provide solutions : [here](https://stackoverflow.com/)
+## Credits
+All of [stackoverflow](https://stackoverflow.com/)'s lovely contributers those help and provide solutions
 
 ## Disclaimer
 This software has been created purely for the purposes of academic research. It is not intended to be used to attack other systems. Project maintainers are not responsible or liable for misuse of the software. Use responsibly.
