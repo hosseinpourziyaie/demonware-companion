@@ -31,6 +31,13 @@ bld/
 [Oo]bj/
 [Ll]og/
 [Ll]ogs/
+s1_dwfiles/
+s2_dwfiles/
+h1_dwfiles/
+t7_dwfiles/
+t8_dwfiles/
+iw6_dwfiles/
+iw7_dwfiles/
 
 # Visual Studio 2015/2017 cache/options directory
 .vs/
