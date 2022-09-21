@@ -40,6 +40,8 @@ ProcHex::ProcHex(const std::string& procName, const std::string& moduleName)
 bool ProcHex::FindProcess(const std::string& procName)
 {
 	bool result = false; std::wstring procName_widestr = std::wstring(procName.begin(), procName.end());
+	std::transform(procName_widestr.begin(), procName_widestr.end(), procName_widestr.begin(), ::tolower);
+
 	HANDLE hSnapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
 
 	if (hSnapshot != INVALID_HANDLE_VALUE)
@@ -51,7 +53,7 @@ bool ProcHex::FindProcess(const std::string& procName)
 		{
 			do
 			{
-				if (!wcscmp(procEntry.szExeFile, procName_widestr.c_str()))
+				if (!wcscmp(_wcslwr(procEntry.szExeFile), procName_widestr.c_str()))
 				{
 					result = true; this->processID = procEntry.th32ProcessID;
 					break;
@@ -67,6 +69,8 @@ bool ProcHex::FindProcess(const std::string& procName)
 bool ProcHex::TargetModule(const std::string& moduleName)
 {
 	bool result = false; std::wstring moduleName_widestr = std::wstring(moduleName.begin(), moduleName.end());
+	std::transform(moduleName_widestr.begin(), moduleName_widestr.end(), moduleName_widestr.begin(), ::tolower);
+
 	HANDLE hSnapshot = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE | TH32CS_SNAPMODULE32, this->processID);
 
 	if (hSnapshot != INVALID_HANDLE_VALUE)
@@ -78,7 +82,7 @@ bool ProcHex::TargetModule(const std::string& moduleName)
 		{
 			do
 			{
-				if (!wcscmp(moduleEntry.szModule, moduleName_widestr.c_str()))
+				if (!wcscmp(_wcslwr(moduleEntry.szModule), moduleName_widestr.c_str()))
 				{
 					this->moduleBase = (DWORD64)moduleEntry.modBaseAddr;
 					this->moduleSize = (DWORD64)moduleEntry.modBaseSize;
@@ -184,6 +188,11 @@ uint64_t ProcHex::FollowJump(uint64_t Addr)
 uint64_t ProcHex::ElevateByBase(uint64_t Addr)
 {
 	return this->moduleBase + Addr;
+}
+
+uint64_t ProcHex::LowerByBase(uint64_t Addr)
+{
+	return Addr - this->moduleBase;
 }
 
 uint64_t ProcHex::FindPattern(uint64_t searchStartAddr, size_t searchLength, const unsigned char* pattern, const char* mask)

@@ -5,8 +5,19 @@ class BlackOps3
 public:
 	static void StartUpExtraction(ProcHex process);
 
+
 private:
 	static std::map<std::string, uintptr_t> dwFileOperationInfoList;
+
+	enum dwFileOpResult
+	{
+		DW_FILEOP_SUCCESS = 0,
+		DW_FILEOP_NOT_FOUND = 1,
+		DW_FILEOP_FAILURE = 2
+	};
+
+	inline static std::string getFileOpResultSTR(dwFileOpResult num);
+
 
 	struct bdFileData
 	{
@@ -34,15 +45,17 @@ private:
 
 	struct dwFileOperationInfo
 	{
-		dwFileTask fileTask;      // 000
-		char padding_unk1[16];    // 312
-		bool fetchCompleted;      // 328
-		bool writeCompleted;      // 329
-		bool isUserFile;          // 330
-		bool isCompressedFile;    // 331
-		char padding_unk2[4];     // 332
-		void* fileBuffer;         // 336
-		uint32_t bufferSize;      // 344
+		dwFileTask fileTask;        // 000
+		char padding_unk1[16];      // 312
+		bool fetchCompleted;        // 328
+		bool writeCompleted;        // 329
+		bool isUserFile;            // 330
+		bool isCompressedFile;      // 331
+		char padding_unk2[4];       // 332
+		void* fileBuffer;           // 336
+		uint32_t bufferSize;        // 344
+		uint32_t decompressedSize;  // 348
+		dwFileOpResult result;      // 352
 	};
 
 	struct onlinePubData

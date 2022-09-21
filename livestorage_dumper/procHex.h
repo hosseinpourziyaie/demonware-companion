@@ -42,8 +42,7 @@ public:
 	uint64_t FollowJump(uint64_t Addr);
 	uint64_t FollowLea(uint64_t Addr);
 	uint64_t ElevateByBase(uint64_t Addr);
-
-	static std::string getLastErrorSTR();
+	uint64_t LowerByBase(uint64_t Addr);
 
 	uint64_t FindPattern(uint64_t searchStartAddr, size_t searchLength, const unsigned char* pattern, const char* mask);
 
