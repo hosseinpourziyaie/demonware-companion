@@ -25,3 +25,13 @@ bool create_directory_if_not_exists(std::string directory)
 
 	return true;
 }
+
+std::string to_lower(std::string str)
+{
+	for (char& ch : str)
+	{
+		ch = tolower(ch);
+	}
+
+	return str;
+}

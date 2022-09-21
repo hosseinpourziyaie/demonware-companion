@@ -52,7 +52,7 @@ void SearchForSupportedGameInstance()
 		{
 			if (proc.OpenHandle())
 			{
-				if (proc.TargetModule(pair.first))
+				if (proc.TargetModule(to_lower(pair.first)))
 				{
 					std::cout << "------------------------------------------------------------------------------------------------" << std::endl;
 					std::cout << "[INFO] " << "found supported game: " << pair.first << " -- BaseAddr: 0x" << std::hex << std::uppercase << proc.moduleBase << " -- ImgSize: 0x" << proc.moduleSize << std::dec << "" << std::endl << std::endl;

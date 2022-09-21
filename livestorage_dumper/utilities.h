@@ -15,3 +15,4 @@ _____________________________DEMONWARE COMPANION______________________________**
 #pragma once
 
 bool create_directory_if_not_exists(std::string dir);
+std::string to_lower(std::string str);
