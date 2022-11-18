@@ -37,19 +37,20 @@ unsigned int Discovery_getDataTypeSize(char type)
 
 void ByteBuffer_StructureDiscovery(const char* file)
 {
-    auto reader = new bdByteBufferReader{ read_binary_file(file), 0 }; std::string result("struct bdByteBufferDiscovery\n{\n"); int data_read_count = 0;
+    auto reader = new bdByteBufferReader(read_binary_file(file)); std::string result("struct bdByteBufferDiscovery\n{\n"); int data_read_count = 0;
 
     while (reader->current_byte < reader->buffer.size())
     {
-        char data_type; if (!read(reader, 1, &data_type)) break;
+        char data_type; if (!reader->read(1, &data_type)) break;
+
+        data_read_count++;
 
         if (data_type == BD_BB_BLOB_TYPE)
         {
             reader->current_byte--;
-            data_read_count++;
 
             std::vector<unsigned char> binary_data; int length;
-            read_blob(reader, &binary_data, &length);
+            reader->read_blob(&binary_data, &length);
             std::string binary_data_str(binary_data.begin(), binary_data.end());
 
             result.append(std::format("    char m_data{}[{}]; // {} (blob)\n", data_read_count, length, binary_data_str));
@@ -57,21 +58,39 @@ void ByteBuffer_StructureDiscovery(const char* file)
         else if (data_type == BD_BB_SIGNED_CHAR8_STRING_TYPE)
         {
             reader->current_byte--;
-            data_read_count++;
 
             std::string string_data;
-            read_string(reader, &string_data);
+            reader->read_string(&string_data);
 
-            result.append(std::format("    std::string str{}; // {}\n", data_read_count, string_data));
+            result.append(std::format("    std::string entry{}; // {}\n", data_read_count, string_data));
+        }
+        else if (data_type > 100) // BD_BB_ARRAY_TYPE
+        {
+            uint32_t array_size; uint32_t num_elements;
+            reader->read_uint32(&array_size);
+            reader->type_checked = false;
+            reader->read_uint32(&num_elements);
+            reader->type_checked = true;
+
+            result.append(std::format("    array entry{}[{}]; // type:{} size:{}\n", data_read_count, num_elements, data_type - 100, array_size));
+
+            result.append("    {\n");
+            uint8_t elem_size = array_size / num_elements;
+
+            for (int i = 0; i < num_elements; i++)
+            {
+                int64_t array_element;
+                reader->read(elem_size, &array_element);
+                result.append(std::format("        {}\n", array_element));
+            }
+            result.append("    }\n");
         }
         else
         {
-            int32_t size = Discovery_getDataTypeSize(data_type); if (size == 0) break;
-            
-            data_read_count++; std::string value_str;
+            int32_t size = Discovery_getDataTypeSize(data_type); if (size == 0) break;         
 
-            int64_t value; // why im so lazy to seperate type handles?
-            read(reader, size, &value);
+            std::string value_str; int64_t value; // why im so lazy to seperate type handles?
+            reader->read(size, &value);
 
             if (size == 4) value_str = std::to_string((int)value);
             else if (size == 2) value_str = std::to_string((short)value);
@@ -85,44 +104,3 @@ void ByteBuffer_StructureDiscovery(const char* file)
 
     std::cout << result << std::endl << std::endl << "----------------------------------------------------------------------------------------------------------------" << std::endl;
 }
-
-//void ByteBuffer_StructureDiscovery(const char* file)
-//{
-//    auto reader = new bdByteBufferReader{ read_binary_file(file), 0 }; std::string result;
-//
-//    while (reader->current_byte < reader->buffer.size())
-//    {
-//        char data_type; if (!read(reader, 1, &data_type)) break;
-//
-//        if (data_type == BD_BB_BLOB_TYPE)
-//        {
-//            unsigned int size;
-//            read_uint32(reader, &size);
-//
-//            reader->current_byte += size;
-//            result.append("binary _ ");
-//        }
-//        else if (data_type == BD_BB_SIGNED_CHAR8_STRING_TYPE)
-//        {
-//            while (reader->buffer.at(reader->current_byte) != 0x00)
-//            {
-//                reader->current_byte++;
-//            }
-//
-//            reader->current_byte++; // NULL TERMINATOR ITSELF
-//            result.append("string _ ");
-//        }
-//        else
-//        {
-//            if (!Discovery_getDataTypeSize(data_type)) break;
-//
-//            if (!reader_skip(reader, Discovery_getDataTypeSize(data_type))) break;
-//
-//            result.append(bdByteBufferDataTypeNames[data_type]); result.append(" _ ");
-//        }
-//    }
-//
-//    if (result.length() > 3) result.erase(result.length() - 3, 3);
-//
-//    std::cout << result << std::endl << std::endl << "----------------------------------------------------------------------------------------------------------------" << std::endl;
-//}

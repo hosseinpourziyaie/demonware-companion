@@ -3,7 +3,7 @@ _____________________________DEMONWARE COMPANION______________________________**
 ***********************************************************************************
 **
 ** - Name        : Common Utilities
-** - Description : set of usefull functions gathered in pne place
+** - Description : set of usefull functions gathered in one place
 **
 ** - Author      : Hosseinpourziyaie
 ** - Started on  : 2022-08-25     | Ended on : 2022-08-28
@@ -32,7 +32,6 @@ bool is_file_exists(const std::string& filename)
 
 std::vector<unsigned char> read_binary_file(const std::string filename)
 {
-    // binary mode is only for switching off newline translation
     std::ifstream file(filename, std::ios::binary);
     file.unsetf(std::ios::skipws);
 

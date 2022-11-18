@@ -36,32 +36,32 @@ struct MarketplaceInventoryItem
 
 void bdMarketplaceInventory(const char* file/*, MarketplaceInventoryItem* output*/)
 {
-    auto reader = new bdByteBufferReader{ read_binary_file(file), 0 };
+    auto reader = new bdByteBufferReader(read_binary_file(file));
 
     while (reader->current_byte < reader->buffer.size())
     {
         //auto output = new MarketplaceInventoryItem{};
         MarketplaceInventoryItem output = {};
 
-        read_uint64(reader, &output.m_userID);
-        read_string(reader, output.m_accountType, 16);
+        reader->read_uint64(&output.m_userID);
+        reader->read_string(output.m_accountType, 16);
         std::cout << "m_userID: " << output.m_userID << "(" << output.m_accountType << ")" << std::endl;
 
-        read_uint32(reader, &output.m_itemId);
-        read_uint32(reader, &output.m_itemQuantity);
-        read_uint32(reader, &output.m_itemXp);
+        reader->read_uint32(&output.m_itemId);
+        reader->read_uint32(&output.m_itemQuantity);
+        reader->read_uint32(&output.m_itemXp);
         std::cout << "m_itemId: " << output.m_itemId << "(0x" << std::hex << std::uppercase << output.m_itemId << std::dec << ")" << " --  m_itemQuantity: " << output.m_itemQuantity << " --  m_itemXp: " << output.m_itemXp << std::endl;
 
         std::vector<unsigned char> m_itemData; int length;
-        read_blob(reader, &m_itemData, &length);
+        reader->read_blob(&m_itemData, &length);
         if(length)std::cout << "m_itemData: 0x" << std::hex << static_cast<int>(m_itemData.at(0)) << std::dec << std::endl;
 
-        read_uint32(reader, &output.m_expireDateTime);
-        read_int64(reader, &output.m_expiryDuration);
+        reader->read_uint32(&output.m_expireDateTime);
+        reader->read_int64(&output.m_expiryDuration);
         std::cout << "m_expireDateTime: " << output.m_expireDateTime << " --  m_expiryDuration: " << output.m_expiryDuration << std::endl;
 
-        read_uint16(reader, &output.m_collisionField);
-        read_uint32(reader, &output.m_modDateTime);
+        reader->read_uint16(&output.m_collisionField);
+        reader->read_uint32(&output.m_modDateTime);
         std::cout << "m_collisionField: " << output.m_collisionField << " --  m_modDateTime: " << output.m_modDateTime << std::endl;
         std::cout << "m_modDateTime: " << convert_unix_time(output.m_modDateTime) << std::endl;
 
@@ -72,24 +72,24 @@ void bdMarketplaceInventory(const char* file/*, MarketplaceInventoryItem* output
 
 void bdMarketingComms(const char* file)
 {
-    auto reader = new bdByteBufferReader{ read_binary_file(file), 0 };
+    auto reader = new bdByteBufferReader(read_binary_file(file));
 
     while (reader->current_byte < reader->buffer.size())
     {
         unsigned __int64 m_messageID; std::string m_languageCode;
-        read_uint64(reader, &m_messageID);
+        reader->read_uint64(&m_messageID);
         std::cout << "m_messageID: " << m_messageID << std::endl;
 
-        read_string(reader, &m_languageCode);
+        reader->read_string(&m_languageCode);
         std::cout << "m_languageCode: <" << m_languageCode << ">" << std::endl;
 
         std::vector<unsigned char> m_content; int length;
-        read_blob(reader, &m_content, &length);
+        reader->read_blob(&m_content, &length);
         std::string m_content_str(m_content.begin(), m_content.end());
         std::cout << "m_content: " << m_content_str << std::endl;
 
         std::vector<unsigned char> m_metadata;
-        read_blob(reader, &m_metadata, &length);
+        reader->read_blob(&m_metadata, &length);
         std::string m_metadata_str(m_metadata.begin(), m_metadata.end());
         std::cout << "m_metadata: " << m_metadata_str << std::endl;
 
@@ -101,8 +101,8 @@ void ShowProgramOptions(char* file)
 {
     std::cout << "Working sample: \"" << file << "\"" << std::endl << std::endl << "  Please choose desired function by inputing its specific number : " << std::endl << std::endl;
     std::cout << "  1- perform data structure Discovery" << std::endl;
-    std::cout << "  2- deserialize bdMarketplaceInventory buffer" << std::endl;
-    std::cout << "  3- deserialize bdMarketingComms buffer" << std::endl;
+    std::cout << "  2- deserialize bdMarketingComms buffer" << std::endl;
+    std::cout << "  3- deserialize bdMarketplaceInventory buffer" << std::endl;
 
     int input;
     while (!(std::cin >> input) || (input < 1 || 4 < input)) {  //check the Input format for integer the right way
@@ -118,10 +118,10 @@ void ShowProgramOptions(char* file)
     case 1:
         ByteBuffer_StructureDiscovery(file);
         break;
-    case 2:
+    case 3:
         bdMarketplaceInventory(file);
         break;
-    case 3:
+    case 2:
         bdMarketingComms(file);
         break;
     default:
