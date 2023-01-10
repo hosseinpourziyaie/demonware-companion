@@ -16,7 +16,9 @@ enum bdByteBufferDataType
     BD_BB_SIGNED_INTEGER64_TYPE = 9,
     BD_BB_UNSIGNED_INTEGER64_TYPE = 10,
     BD_BB_SIGNED_CHAR8_STRING_TYPE = 16,
-    BD_BB_BLOB_TYPE = 19
+    BD_BB_BLOB_TYPE = 19,
+    BD_BB_STRUCTURED_DATA_TYPE = 23,
+    BD_BB_MAX_TYPE = 32
 };
 
 extern const char* bdByteBufferDataTypeNames[];
@@ -45,6 +47,7 @@ public:
     bool read_string(std::string* output);
     bool read_string(char* output, int maxlen);
     bool read_blob(std::vector<unsigned char>* output, int* length = 0);
+    bool read_structed_data(std::vector<unsigned char>* output, int* length = 0);
 
     bool reader_skip(unsigned int bytes);
     bool reader_skip(bdByteBufferDataType type, bool type_included = true);

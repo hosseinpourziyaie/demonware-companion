@@ -17,7 +17,7 @@ _____________________________DEMONWARE COMPANION______________________________**
 
 const char* bdByteBufferDataTypeNames[] =
 {
-    "none", "bool", "int8_t", "uint8_t", "wchar_t", "int16_t", "uint16_t", "int32_t", "uint32_t", "int64_t", "uint64_t", "", "", "float32", "float64", "", "string", "", "", "binary"
+    "none", "bool", "int8_t", "uint8_t", "wchar_t", "int16_t", "uint16_t", "int32_t", "uint32_t", "int64_t", "uint64_t", "", "", "float32", "float64", "", "string", "", "", "binary", "", "", "", "structed"
 };
 
 bdByteBufferReader::bdByteBufferReader() {}
@@ -52,43 +52,43 @@ bool bdByteBufferReader::read_data_type(bdByteBufferDataType expected)
 
 bool bdByteBufferReader::read_int16(int16_t* output)
 {
-    if (!read_data_type(BD_BB_SIGNED_INTEGER16_TYPE)) return false;
-    return read(2, output);
+    if (!this->read_data_type(BD_BB_SIGNED_INTEGER16_TYPE)) return false;
+    return this->read(2, output);
 }
 
 bool bdByteBufferReader::read_uint16(uint16_t* output)
 {
-    if (!read_data_type(BD_BB_UNSIGNED_INTEGER16_TYPE)) return false;
-    return read(2, output);
+    if (!this->read_data_type(BD_BB_UNSIGNED_INTEGER16_TYPE)) return false;
+    return this->read(2, output);
 }
 
 bool bdByteBufferReader::read_int32(int32_t* output)
 {
-    if (!read_data_type(BD_BB_SIGNED_INTEGER32_TYPE)) return false;
-    return read(4, output);
+    if (!this->read_data_type(BD_BB_SIGNED_INTEGER32_TYPE)) return false;
+    return this->read(4, output);
 }
 
 bool bdByteBufferReader::read_uint32(uint32_t* output)
 {
-    if (!read_data_type(BD_BB_UNSIGNED_INTEGER32_TYPE)) return false;
-    return read(4, output);
+    if (!this->read_data_type(BD_BB_UNSIGNED_INTEGER32_TYPE)) return false;
+    return this->read(4, output);
 }
 
 bool bdByteBufferReader::read_int64(int64_t* output)
 {
-    if (!read_data_type(BD_BB_SIGNED_INTEGER64_TYPE)) return false;
-    return read(8, output);
+    if (!this->read_data_type(BD_BB_SIGNED_INTEGER64_TYPE)) return false;
+    return this->read(8, output);
 }
 
 bool bdByteBufferReader::read_uint64(uint64_t* output)
 {
-    if (!read_data_type(BD_BB_UNSIGNED_INTEGER64_TYPE)) return false;
-    return read(8, output);
+    if (!this->read_data_type(BD_BB_UNSIGNED_INTEGER64_TYPE)) return false;
+    return this->read(8, output);
 }
 
 bool bdByteBufferReader::read_string(std::string* output)
 {
-    if (!read_data_type(BD_BB_SIGNED_CHAR8_STRING_TYPE)) return false;
+    if (!this->read_data_type(BD_BB_SIGNED_CHAR8_STRING_TYPE)) return false;
 
     while (this->buffer.at(this->current_byte) != 0x00)
     {
@@ -101,7 +101,7 @@ bool bdByteBufferReader::read_string(std::string* output)
 
 bool bdByteBufferReader::read_string(char* output, int maxlen)
 {
-    if (!read_data_type(BD_BB_SIGNED_CHAR8_STRING_TYPE)) return false;
+    if (!this->read_data_type(BD_BB_SIGNED_CHAR8_STRING_TYPE)) return false;
 
     for (size_t i = 0; i < maxlen; i++)
     {
@@ -121,13 +121,29 @@ bool bdByteBufferReader::read_string(char* output, int maxlen)
 
 bool bdByteBufferReader::read_blob(std::vector<unsigned char>* output, int* length)
 {
-    if (!read_data_type(BD_BB_BLOB_TYPE))
+    if (!this->read_data_type(BD_BB_BLOB_TYPE))
     {
         return false;
     }
 
     unsigned int size = 0;
-    read_uint32(&size);
+    this->read_uint32(&size);
+
+    if (size) output->insert(output->begin(), this->buffer.begin() + this->current_byte, this->buffer.begin() + this->current_byte + size);
+    if (length) *length = static_cast<int>(size);
+
+    this->current_byte += size;  return true;
+}
+
+bool bdByteBufferReader::read_structed_data(std::vector<unsigned char>* output, int* length)
+{
+    if (!this->read_data_type(BD_BB_STRUCTURED_DATA_TYPE))
+    {
+        return false;
+    }
+
+    unsigned int size = 0;
+    this->read_uint32(&size);
 
     if (size) output->insert(output->begin(), this->buffer.begin() + this->current_byte, this->buffer.begin() + this->current_byte + size);
     if (length) *length = static_cast<int>(size);

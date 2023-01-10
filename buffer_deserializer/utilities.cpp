@@ -25,14 +25,50 @@ std::string convert_unix_time(uint32_t timestamp)
     return ss.str();
 }
 
-bool is_file_exists(const std::string& filename)
+bool is_file_exists(const std::string& file_path)
 {
-    return _access_s(filename.c_str(), 0) == 0;
+    return _access_s(file_path.c_str(), 0) == 0;
 }
 
-std::vector<unsigned char> read_binary_file(const std::string filename)
+bool create_directory_if_not_exists(std::string directory)
 {
-    std::ifstream file(filename, std::ios::binary);
+    struct stat info;
+
+    if (stat(directory.c_str(), &info) == -1) {
+        if (_mkdir(directory.c_str()) == -1) return false;
+    }
+
+    return true;
+}
+
+std::string get_file_name_from_path(std::string path)
+{
+    const auto pos = path.find_last_of("/\\");
+    if (pos == std::string::npos) return path;
+
+    return path.substr(pos + 1);
+}
+
+bool write_binary_file(std::vector<unsigned char> buffer, std::string file_path)
+{
+    const auto pos = file_path.find_last_of("/\\");
+    if (pos != std::string::npos)
+    {
+        if (create_directory_if_not_exists(file_path.substr(0, pos).c_str()) == false) return false;
+    }
+
+    std::ofstream stream(file_path, std::ios::binary | std::ios::out);
+    if (!stream.is_open())  return false;
+
+    stream.write(reinterpret_cast<const char*>(buffer.data()), buffer.size());
+    stream.close();
+
+    return true;
+}
+
+std::vector<unsigned char> read_binary_file(const std::string file_path)
+{
+    std::ifstream file(file_path, std::ios::binary);
     file.unsetf(std::ios::skipws);
 
     std::streampos file_size;
