@@ -11,6 +11,8 @@ it handles all of multiplayer lobby services including matchmaking, cloud based 
 - **data_interceptor** : Dynamic-link library that hooks demonware functions to dump lobby payloads [planned to work with h1][wip]
 - **livestorage_dumper** : an external program that opens handle to game memory and exports publisher files [planned to work with iw6,iw7,s1,s2,h1,bo3 and bo4][beta]
 
+Check out Extended Documentation [HERE](https://github.com/hosseinpourziyaie/demonware_companion/blob/main/documentation/README.md)
+
 
 ## Compile
 All of Projects are coded on VS2022 and latest C++ Standards are considered. also I avoided utilizing c++17 unique libraries for higher compatibility. though still its recommended to use VS2019 or higher.
