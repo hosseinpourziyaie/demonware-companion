@@ -50,6 +50,18 @@ bool bdByteBufferReader::read_data_type(bdByteBufferDataType expected)
     this->current_byte++;  return true;
 }
 
+bool bdByteBufferReader::read_byte(int8_t* output)
+{
+    if (!this->read_data_type(BD_BB_SIGNED_CHAR8_TYPE)) return false;
+    return this->read(1, output);
+}
+
+bool bdByteBufferReader::read_ubyte(uint8_t* output)
+{
+    if (!this->read_data_type(BD_BB_UNSIGNED_CHAR8_TYPE)) return false;
+    return this->read(1, output);
+}
+
 bool bdByteBufferReader::read_int16(int16_t* output)
 {
     if (!this->read_data_type(BD_BB_SIGNED_INTEGER16_TYPE)) return false;

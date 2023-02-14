@@ -37,6 +37,8 @@ public:
 
     bool read(unsigned int bytes, void* output);
     bool read_data_type(bdByteBufferDataType expected);
+    bool read_byte(int8_t* output);
+    bool read_ubyte(uint8_t* output);
     bool read_int16(int16_t* output);
     bool read_uint16(uint16_t* output);
     bool read_int32(int32_t* output);
