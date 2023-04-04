@@ -17,7 +17,7 @@ _____________________________DEMONWARE COMPANION______________________________**
 
 const char* bdByteBufferDataTypeNames[] =
 {
-    "none", "bool", "int8_t", "uint8_t", "wchar_t", "int16_t", "uint16_t", "int32_t", "uint32_t", "int64_t", "uint64_t", "", "", "float32", "float64", "", "string", "", "", "binary", "", "", "", "structed"
+    "none", "bool", "int8_t", "uint8_t", "wchar_t", "int16_t", "uint16_t", "int32_t", "uint32_t", "int64_t", "uint64_t", "", "", "float", "double", "", "string", "", "", "binary", "", "", "", "structed"
 };
 
 bdByteBufferReader::bdByteBufferReader() {}
@@ -95,6 +95,18 @@ bool bdByteBufferReader::read_int64(int64_t* output)
 bool bdByteBufferReader::read_uint64(uint64_t* output)
 {
     if (!this->read_data_type(BD_BB_UNSIGNED_INTEGER64_TYPE)) return false;
+    return this->read(8, output);
+}
+
+bool bdByteBufferReader::read_float(float* output)
+{
+    if (!this->read_data_type(BD_BB_FLOAT32_TYPE)) return false;
+    return this->read(4, output);
+}
+
+bool bdByteBufferReader::read_double(double* output)
+{
+    if (!this->read_data_type(BD_BB_FLOAT64_TYPE)) return false;
     return this->read(8, output);
 }
 

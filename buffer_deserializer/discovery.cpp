@@ -28,9 +28,9 @@ unsigned int Discovery_getDataTypeSize(char type)
         return 1;
     case BD_BB_SIGNED_INTEGER16_TYPE: case BD_BB_UNSIGNED_INTEGER16_TYPE:
         return 2;
-    case BD_BB_SIGNED_INTEGER32_TYPE: case BD_BB_UNSIGNED_INTEGER32_TYPE:
+    case BD_BB_SIGNED_INTEGER32_TYPE: case BD_BB_UNSIGNED_INTEGER32_TYPE: case BD_BB_FLOAT32_TYPE:
         return 4;
-    case BD_BB_SIGNED_INTEGER64_TYPE: case BD_BB_UNSIGNED_INTEGER64_TYPE:
+    case BD_BB_SIGNED_INTEGER64_TYPE: case BD_BB_UNSIGNED_INTEGER64_TYPE: case BD_BB_FLOAT64_TYPE:
         return 8;
     default:
         return 0; // corrupted or unknown data type
@@ -59,6 +59,10 @@ std::string Discovery_getDataValueString(char type, uint64_t value)
         return std::to_string((long long)value); break;
     case BD_BB_UNSIGNED_INTEGER64_TYPE:
         return std::to_string((unsigned long long)value); break;
+    case BD_BB_FLOAT32_TYPE:
+        return std::to_string((float)value); break;
+    case BD_BB_FLOAT64_TYPE:
+        return std::to_string((double)value); break;
     default:
         return std::to_string(value); break;
     }
